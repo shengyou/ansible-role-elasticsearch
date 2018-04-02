@@ -1,0 +1,44 @@
+
+
+- name: install epel-release
+  yum:
+    name: epel-release
+    state: present
+    update_cache: yes
+
+- name: install java-1.8.0-openjdk.x86_64
+  yum:
+    name: java-1.8.0-openjdk.x86_64
+    state: present
+    update_cache: yes
+
+# - name: Accept Java 8 License
+#   debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+#   become: yes
+
+# - name: Install oracle-java8-installer
+#   apt: name="{{ item }}" state=present update_cache=yes force=yes
+#   with_items:
+#     - oracle-java8-installer
+
+- name: get elasticsearch-{{ elasticsearch_version }}.rpm
+  get_url:
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.rpm"
+    dest: "/tmp/elasticsearch-{{ elasticsearch_version }}.rpm"
+
+- name: install elasticsearch {{ elasticsearch_version }}
+  yum:
+    name: "/tmp/elasticsearch-{{ elasticsearch_version }}.rpm"
+  register: install_elasticsearch
+
+- name: create /etc/ansible_installed_elasticsearch{{ elasticsearch_version }}
+  file:
+    path: "/etc/ansible_installed_elasticsearch{{ elasticsearch_version }}"
+    state: touch
+  when: install_elasticsearch.changed
+
+- name: install plugin
+  command: "/usr/share/elasticsearch/bin/elasticsearch-plugin install {{ item }}"
+  with_items:
+    - "{{ install_plugins }}"
+  when: install_plugins is defined
