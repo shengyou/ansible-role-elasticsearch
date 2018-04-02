@@ -27,8 +27,29 @@
     state: touch
   when: install_elasticsearch.changed
 
+- name: Ensure Elasticsearch enabled
+  service:
+    name: elasticsearch
+    state: started
+    enabled: yes
+  when: ansible_distribution_version == "14.04"
+
+- name: Ensure Elasticsearch enabled
+  systemd:
+    name: elasticsearch
+    state: started
+    enabled: yes
+  when: ansible_distribution_version == "16.04"
+
 - name: install plugin
   command: "/usr/share/elasticsearch/bin/elasticsearch-plugin install {{ item }}"
   with_items:
     - "{{ install_plugins }}"
   when: install_plugins is defined
+  register: install_elasticsearch_plugins
+
+- name: create /etc/ansible_installed_elasticsearch_plugins
+  file:
+    path: "/etc/ansible_installed_elasticsearch_plugins"
+    state: touch
+  when: install_elasticsearch_plugins.changed
