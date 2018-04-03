@@ -21,8 +21,6 @@ script:
   # Run tests.
   - ${PWD}/tests/test.sh
 
-  # my test code
-  - 'docker exec ${container_id} ls /etc/elasticsearch | grep "/etc/elasticsearch"'
 
 # notifications:
   # webhooks: https://galaxy.ansible.com/api/v1/notifications/
