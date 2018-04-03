@@ -43,6 +43,8 @@
 
 - name: install plugin
   command: "/usr/share/elasticsearch/bin/elasticsearch-plugin install {{ item }}"
+  args:
+    creates: /etc/ansible_installed_elasticsearch_plugins
   with_items:
     - "{{ install_plugins }}"
   when: install_plugins is defined
