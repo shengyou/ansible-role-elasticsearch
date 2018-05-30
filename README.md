@@ -21,15 +21,12 @@ Role Variables
 ```
 elasticsearch_version: 5.6.4
 
-install_plugins:
-  - "https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.4/elasticsearch-analysis-ik-5.6.4.zip"
-
 ```
 
 以下 Variables 非必填項目，想要設定客製的 elasticsearch 才需要設置。
 
 使用方式請參考範例。
-
+* install_plugins:
 * custom_elasticsearch_conf
 
 
@@ -51,6 +48,7 @@ Example Playbook
     - elasticsearch_version: 6.2.3
     - install_plugins:
         - ingest-attachment
+        - "https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.4/elasticsearch-analysis-ik-5.6.4.zip"
     - custom_elasticsearch_conf: /path/to/your/custom_elasticsearchrc.yml
 
   roles:

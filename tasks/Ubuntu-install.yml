@@ -1,4 +1,5 @@
 
+- apt: name="software-properties-common" state=present update_cache=yes
 
 - apt_repository:
     repo: 'ppa:webupd8team/java'
@@ -12,10 +13,18 @@
   with_items:
     - oracle-java8-installer
 
-- name: get elasticsearch-{{ elasticsearch_version }}.deb
+- name: get elasticsearch-{{ elasticsearch_version }}.deb (https://artifacts.elastic.co)
   get_url:
     url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.deb"
     dest: "/tmp/elasticsearch-{{ elasticsearch_version }}.deb"
+  ignore_errors: yes
+  register: get_elasticsearch
+
+- name: get elasticsearch-{{ elasticsearch_version }}.deb (https://download.elastic.co)
+  get_url:
+    url: "https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.deb"
+    dest: "/tmp/elasticsearch-{{ elasticsearch_version }}.deb"
+  when: get_elasticsearch.failed
 
 - name: install elasticsearch {{ elasticsearch_version }}
   apt: deb=/tmp/elasticsearch-{{ elasticsearch_version }}.deb

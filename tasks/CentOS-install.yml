@@ -12,10 +12,26 @@
     state: present
     update_cache: yes
 
-- name: get elasticsearch-{{ elasticsearch_version }}.rpm
+- name: get elasticsearch-{{ elasticsearch_version }}.rpm (https://artifacts.elastic.co)
   get_url:
     url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.rpm"
     dest: "/tmp/elasticsearch-{{ elasticsearch_version }}.rpm"
+  ignore_errors: yes
+  register: get_elasticsearch_artifacts
+
+- name: get elasticsearch-{{ elasticsearch_version }}.rpm (https://download.elastic.co)
+  get_url:
+    url: "https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.rpm"
+    dest: "/tmp/elasticsearch-{{ elasticsearch_version }}.rpm"
+  ignore_errors: yes
+  register: get_elasticsearch_download
+  when: get_elasticsearch_artifacts.failed
+
+- name: get elasticsearch-{{ elasticsearch_version }}.noarch.rpm (https://download.elastic.co)
+  get_url:
+    url: "https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.noarch.rpm"
+    dest: "/tmp/elasticsearch-{{ elasticsearch_version }}.rpm"
+  when: get_elasticsearch_download.failed
 
 - name: install elasticsearch {{ elasticsearch_version }}
   yum:
