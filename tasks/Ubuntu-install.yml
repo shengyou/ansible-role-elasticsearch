@@ -9,9 +9,7 @@
   become: yes
 
 - name: Install oracle-java8-installer
-  apt: name="{{ item }}" state=present update_cache=yes force=yes
-  with_items:
-    - oracle-java8-installer
+  apt: name="oracle-java8-installer" state=present update_cache=yes force=yes
 
 - name: get elasticsearch-{{ elasticsearch_version }}.deb (https://artifacts.elastic.co)
   get_url:
